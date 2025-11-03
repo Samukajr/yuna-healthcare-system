@@ -2002,6 +2002,11 @@ async function confirmarFinalizacao(solicitacaoId) {
         const modalFinalizacao = document.getElementById('modal-finalizacao');
         if (modalFinalizacao) modalFinalizacao.remove();
         
+        // Abrir pesquisa de satisfação após um delay
+        setTimeout(() => {
+            abrirPesquisaSatisfacao(solicitacaoId, solicitacaoData);
+        }, 1000);
+        
         // Fechar modal principal e recarregar dados
         fecharSolicitacaoModal();
         carregarSolicitacoes();
@@ -3007,4 +3012,541 @@ function adicionarEventosSolicitacoes() {
         };
     });
 }
+
+// === SISTEMA DE PESQUISA DE SATISFAÇÃO ===
+
+function abrirPesquisaSatisfacao(solicitacaoId, solicitacaoData) {
+    console.log('[DEBUG] Abrindo pesquisa de satisfação para:', solicitacaoId);
+    
+    // Criar modal de pesquisa de satisfação
+    const modalSatisfacao = document.createElement('div');
+    modalSatisfacao.id = 'modal-pesquisa-satisfacao';
+    modalSatisfacao.style.cssText = `
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background: rgba(0, 0, 0, 0.7); 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        z-index: 10000;
+        animation: fadeIn 0.3s ease-in;
+    `;
+    
+    modalSatisfacao.innerHTML = `
+        <style>
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes fadeOut {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+            .star-rating {
+                display: flex;
+                gap: 5px;
+                justify-content: center;
+                margin: 20px 0;
+            }
+            .star {
+                font-size: 40px;
+                color: #d1d5db;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                user-select: none;
+            }
+            .star:hover {
+                color: #fbbf24;
+                transform: scale(1.1);
+            }
+            .star.selected {
+                color: #f59e0b;
+            }
+            .satisfaction-modal {
+                background: white;
+                border-radius: 16px;
+                padding: 32px;
+                max-width: 500px;
+                width: 90%;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                text-align: center;
+                position: relative;
+                animation: slideIn 0.3s ease-out;
+            }
+            @keyframes slideIn {
+                from { transform: translateY(-50px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+        </style>
+        <div class="satisfaction-modal">
+            <div style="position: absolute; top: 12px; right: 16px;">
+                <button onclick="fecharPesquisaSatisfacao()" style="background: none; border: none; font-size: 24px; color: #9ca3af; cursor: pointer; padding: 4px;">&times;</button>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); margin: -32px -32px 24px -32px; padding: 24px; border-radius: 16px 16px 0 0; color: white;">
+                <h2 style="margin: 0; font-size: 24px; font-weight: 600;">
+                    <i class="fas fa-star" style="margin-right: 8px;"></i>
+                    Pesquisa de Satisfação
+                </h2>
+                <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 14px;">
+                    Como você avalia o atendimento da equipe ${solicitacaoData.equipe || 'responsável'}?
+                </p>
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <p style="margin: 0 0 8px 0; color: #374151; font-weight: 500;">
+                    <strong>Solicitação:</strong> ${solicitacaoData.descricao || solicitacaoData.titulo || 'Serviço realizado'}
+                </p>
+                <p style="margin: 0; color: #6b7280; font-size: 14px;">
+                    Quarto: ${solicitacaoData.quarto || 'N/A'} | Equipe: ${solicitacaoData.equipe || 'N/A'}
+                </p>
+            </div>
+            
+            <div class="star-rating">
+                <span class="star" data-rating="1">⭐</span>
+                <span class="star" data-rating="2">⭐</span>
+                <span class="star" data-rating="3">⭐</span>
+                <span class="star" data-rating="4">⭐</span>
+                <span class="star" data-rating="5">⭐</span>
+            </div>
+            
+            <div id="rating-text" style="font-weight: 500; color: #6b7280; margin-bottom: 20px; min-height: 20px;">
+                Selecione uma nota de 1 a 5 estrelas
+            </div>
+            
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; text-align: left; margin-bottom: 8px; color: #374151; font-weight: 500;">
+                    Comentários adicionais (opcional):
+                </label>
+                <textarea 
+                    id="comentario-satisfacao" 
+                    placeholder="Conte-nos sobre sua experiência ou deixe sugestões..."
+                    style="width: 100%; height: 80px; padding: 12px; border: 1px solid #d1d5db; border-radius: 8px; resize: vertical; font-family: inherit; box-sizing: border-box; font-size: 14px;"
+                ></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button 
+                    onclick="fecharPesquisaSatisfacao()" 
+                    style="background: #f3f4f6; color: #374151; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 500;">
+                    Pular Pesquisa
+                </button>
+                <button 
+                    id="btn-enviar-avaliacao"
+                    onclick="enviarAvaliacao('${solicitacaoId}')" 
+                    style="background: #3b82f6; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 500; opacity: 0.5; pointer-events: none;">
+                    <i class="fas fa-paper-plane" style="margin-right: 4px;"></i>Enviar Avaliação
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modalSatisfacao);
+    
+    // Configurar sistema de estrelas
+    let avaliacaoSelecionada = 0;
+    const stars = modalSatisfacao.querySelectorAll('.star');
+    const ratingText = modalSatisfacao.querySelector('#rating-text');
+    const btnEnviar = modalSatisfacao.querySelector('#btn-enviar-avaliacao');
+    
+    const textoAvaliacoes = {
+        1: '😞 Muito insatisfeito',
+        2: '😐 Insatisfeito', 
+        3: '😊 Neutro',
+        4: '😃 Satisfeito',
+        5: '🤩 Muito satisfeito'
+    };
+    
+    stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+            avaliacaoSelecionada = parseInt(star.dataset.rating);
+            
+            // Atualizar visual das estrelas
+            stars.forEach((s, i) => {
+                if (i < avaliacaoSelecionada) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+            
+            // Atualizar texto
+            ratingText.textContent = textoAvaliacoes[avaliacaoSelecionada];
+            
+            // Habilitar botão enviar
+            btnEnviar.style.opacity = '1';
+            btnEnviar.style.pointerEvents = 'auto';
+            btnEnviar.style.background = '#10b981';
+        });
+        
+        // Efeito hover
+        star.addEventListener('mouseenter', () => {
+            const rating = parseInt(star.dataset.rating);
+            stars.forEach((s, i) => {
+                if (i < rating) {
+                    s.style.color = '#fbbf24';
+                } else {
+                    s.style.color = '#d1d5db';
+                }
+            });
+        });
+        
+        star.addEventListener('mouseleave', () => {
+            stars.forEach((s, i) => {
+                if (i < avaliacaoSelecionada) {
+                    s.style.color = '#f59e0b';
+                } else {
+                    s.style.color = '#d1d5db';
+                }
+            });
+        });
+    });
+    
+    // Salvar referência global para acesso nas funções onclick
+    window.avaliacaoAtual = {
+        solicitacaoId: solicitacaoId,
+        getAvaliacao: () => avaliacaoSelecionada,
+        solicitacaoData: solicitacaoData
+    };
+}
+
+async function enviarAvaliacao(solicitacaoId) {
+    if (!window.avaliacaoAtual || window.avaliacaoAtual.getAvaliacao() === 0) {
+        showToast('Aviso', 'Por favor, selecione uma avaliação primeiro!', 'warning');
+        return;
+    }
+    
+    try {
+        const avaliacao = window.avaliacaoAtual.getAvaliacao();
+        const comentario = document.getElementById('comentario-satisfacao')?.value || '';
+        const usuarioAdmin = window.usuarioAdmin || JSON.parse(localStorage.getItem('usuarioAdmin') || '{}');
+        
+        const avaliacaoData = {
+            solicitacaoId: solicitacaoId,
+            avaliacao: avaliacao,
+            comentario: comentario.trim(),
+            dataAvaliacao: new Date().toISOString(),
+            avaliadoPor: usuarioAdmin.nome || 'Equipe',
+            equipaAvaliada: window.avaliacaoAtual.solicitacaoData.equipe,
+            tipoServico: window.avaliacaoAtual.solicitacaoData.tipo || window.avaliacaoAtual.solicitacaoData.equipe,
+            quarto: window.avaliacaoAtual.solicitacaoData.quarto
+        };
+        
+        // Salvar no Firestore
+        await window.db.collection('avaliacoes_satisfacao').add(avaliacaoData);
+        
+        // Atualizar solicitação com referência à avaliação
+        await window.db.collection('solicitacoes').doc(solicitacaoId).update({
+            avaliacaoSatisfacao: {
+                nota: avaliacao,
+                comentario: comentario.trim(),
+                dataAvaliacao: new Date().toISOString(),
+                avaliado: true
+            }
+        });
+        
+        showToast('Sucesso', `Obrigado! Sua avaliação de ${avaliacao} estrela${avaliacao > 1 ? 's' : ''} foi registrada.`, 'success');
+        
+        fecharPesquisaSatisfacao();
+        
+        console.log('✅ Avaliação de satisfação salva:', avaliacaoData);
+        
+    } catch (error) {
+        console.error('Erro ao salvar avaliação:', error);
+        showToast('Erro', 'Não foi possível salvar sua avaliação. Tente novamente.', 'error');
+    }
+}
+
+function fecharPesquisaSatisfacao() {
+    const modal = document.getElementById('modal-pesquisa-satisfacao');
+    if (modal) {
+        modal.style.animation = 'fadeOut 0.3s ease-out';
+        setTimeout(() => {
+            modal.remove();
+        }, 300);
+    }
+    
+    // Limpar referência global
+    if (window.avaliacaoAtual) {
+        delete window.avaliacaoAtual;
+    }
+}
+
+// Expor funções globalmente
+window.abrirPesquisaSatisfacao = abrirPesquisaSatisfacao;
+window.enviarAvaliacao = enviarAvaliacao;
+window.fecharPesquisaSatisfacao = fecharPesquisaSatisfacao;
+
+// === DASHBOARD DE SATISFAÇÃO ===
+
+async function abrirDashboardSatisfacao() {
+    console.log('[DEBUG] Abrindo dashboard de satisfação...');
+    
+    // Verificar permissões (apenas super_admin)
+    const usuarioAdmin = window.usuarioAdmin || JSON.parse(localStorage.getItem('usuarioAdmin') || '{}');
+    const userRole = window.userRole || usuarioAdmin.role;
+    
+    if (!userRole || userRole !== 'super_admin') {
+        showToast('Erro', 'Acesso negado. Apenas super administradores podem ver relatórios de satisfação.', 'error');
+        return;
+    }
+    
+    try {
+        // Buscar todas as avaliações
+        const avaliacoesSnapshot = await window.db.collection('avaliacoes_satisfacao')
+            .orderBy('dataAvaliacao', 'desc')
+            .limit(100)
+            .get();
+        
+        const avaliacoes = [];
+        avaliacoesSnapshot.forEach(doc => {
+            avaliacoes.push({ id: doc.id, ...doc.data() });
+        });
+        
+        // Criar modal do dashboard
+        const modalDashboard = document.createElement('div');
+        modalDashboard.id = 'modal-dashboard-satisfacao';
+        modalDashboard.style.cssText = `
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.6); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 10000;
+            padding: 20px;
+        `;
+        
+        const metricas = calcularMetricasSatisfacao(avaliacoes);
+        
+        modalDashboard.innerHTML = `
+            <div style="
+                background: white; 
+                border-radius: 16px; 
+                width: 95%; 
+                max-width: 1200px; 
+                max-height: 90vh; 
+                overflow-y: auto;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            ">
+                <div style="
+                    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); 
+                    padding: 24px; 
+                    border-radius: 16px 16px 0 0; 
+                    color: white;
+                    position: relative;
+                ">
+                    <button onclick="fecharDashboardSatisfacao()" style="
+                        position: absolute; 
+                        top: 16px; 
+                        right: 20px; 
+                        background: none; 
+                        border: none; 
+                        color: white; 
+                        font-size: 24px; 
+                        cursor: pointer;
+                        padding: 4px;
+                    ">&times;</button>
+                    
+                    <h2 style="margin: 0; font-size: 28px; font-weight: 600; display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-star"></i>
+                        Dashboard de Satisfação
+                    </h2>
+                    <p style="margin: 8px 0 0 0; opacity: 0.9; font-size: 16px;">
+                        Análise das avaliações de satisfação dos serviços
+                    </p>
+                </div>
+                
+                <div style="padding: 24px;">
+                    <!-- Métricas Gerais -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 32px;">
+                        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                            <i class="fas fa-star" style="font-size: 32px; margin-bottom: 8px;"></i>
+                            <div style="font-size: 28px; font-weight: bold;">${metricas.mediaGeral.toFixed(1)}</div>
+                            <div style="opacity: 0.9;">Média Geral</div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                            <i class="fas fa-poll" style="font-size: 32px; margin-bottom: 8px;"></i>
+                            <div style="font-size: 28px; font-weight: bold;">${avaliacoes.length}</div>
+                            <div style="opacity: 0.9;">Total Avaliações</div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                            <i class="fas fa-thumbs-up" style="font-size: 32px; margin-bottom: 8px;"></i>
+                            <div style="font-size: 28px; font-weight: bold;">${metricas.percentualPositivo}%</div>
+                            <div style="opacity: 0.9;">Satisfação Positiva</div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 20px; border-radius: 12px; text-align: center;">
+                            <i class="fas fa-chart-line" style="font-size: 32px; margin-bottom: 8px;"></i>
+                            <div style="font-size: 28px; font-weight: bold;">${metricas.melhorEquipe}</div>
+                            <div style="opacity: 0.9;">Melhor Equipe</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Métricas por Equipe -->
+                    <div style="background: #f9fafb; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+                        <h3 style="margin: 0 0 16px 0; color: #374151; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-users"></i>
+                            Satisfação por Equipe
+                        </h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                            ${Object.entries(metricas.porEquipe).map(([equipe, dados]) => `
+                                <div style="background: white; padding: 16px; border-radius: 8px; border-left: 4px solid ${getCorEquipe(equipe)};">
+                                    <div style="font-weight: bold; color: #374151; margin-bottom: 8px; text-transform: capitalize;">
+                                        ${equipe}
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                        <span>Média:</span>
+                                        <span style="font-weight: bold; color: ${dados.media >= 4 ? '#10b981' : dados.media >= 3 ? '#f59e0b' : '#ef4444'};">
+                                            ${dados.media.toFixed(1)} ⭐
+                                        </span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <span>Avaliações:</span>
+                                        <span style="font-weight: bold;">${dados.total}</span>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- Avaliações Recentes -->
+                    <div style="background: #f9fafb; padding: 20px; border-radius: 12px;">
+                        <h3 style="margin: 0 0 16px 0; color: #374151; display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-clock"></i>
+                            Avaliações Recentes
+                        </h3>
+                        <div style="max-height: 400px; overflow-y: auto;">
+                            ${avaliacoes.slice(0, 20).map(avaliacao => `
+                                <div style="background: white; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid ${getCorAvaliacao(avaliacao.avaliacao)};">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                        <div>
+                                            <div style="font-weight: bold; color: #374151;">
+                                                ${getEstrelasVisuais(avaliacao.avaliacao)} 
+                                                <span style="color: #6b7280;">(${avaliacao.avaliacao}/5)</span>
+                                            </div>
+                                            <div style="color: #6b7280; font-size: 14px; margin-top: 4px;">
+                                                Equipe: ${avaliacao.equipaAvaliada} | Quarto: ${avaliacao.quarto || 'N/A'}
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right; color: #6b7280; font-size: 12px;">
+                                            ${formatarDataHora(avaliacao.dataAvaliacao)}
+                                        </div>
+                                    </div>
+                                    ${avaliacao.comentario ? `
+                                        <div style="background: #f3f4f6; padding: 8px 12px; border-radius: 6px; color: #374151; font-style: italic; font-size: 14px;">
+                                            "${avaliacao.comentario}"
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modalDashboard);
+        
+    } catch (error) {
+        console.error('Erro ao carregar dashboard de satisfação:', error);
+        showToast('Erro', 'Não foi possível carregar o dashboard de satisfação.', 'error');
+    }
+}
+
+function calcularMetricasSatisfacao(avaliacoes) {
+    if (avaliacoes.length === 0) {
+        return {
+            mediaGeral: 0,
+            percentualPositivo: 0,
+            melhorEquipe: 'N/A',
+            porEquipe: {}
+        };
+    }
+    
+    // Calcular média geral
+    const somaTotal = avaliacoes.reduce((soma, avaliacao) => soma + avaliacao.avaliacao, 0);
+    const mediaGeral = somaTotal / avaliacoes.length;
+    
+    // Calcular percentual positivo (4 e 5 estrelas)
+    const avaliacoesPositivas = avaliacoes.filter(a => a.avaliacao >= 4).length;
+    const percentualPositivo = Math.round((avaliacoesPositivas / avaliacoes.length) * 100);
+    
+    // Calcular métricas por equipe
+    const porEquipe = {};
+    avaliacoes.forEach(avaliacao => {
+        const equipe = avaliacao.equipaAvaliada;
+        if (!porEquipe[equipe]) {
+            porEquipe[equipe] = { total: 0, soma: 0, media: 0 };
+        }
+        porEquipe[equipe].total++;
+        porEquipe[equipe].soma += avaliacao.avaliacao;
+    });
+    
+    // Calcular médias por equipe
+    Object.keys(porEquipe).forEach(equipe => {
+        porEquipe[equipe].media = porEquipe[equipe].soma / porEquipe[equipe].total;
+    });
+    
+    // Encontrar melhor equipe
+    let melhorEquipe = 'N/A';
+    let melhorMedia = 0;
+    Object.entries(porEquipe).forEach(([equipe, dados]) => {
+        if (dados.media > melhorMedia && dados.total >= 3) { // Mínimo 3 avaliações
+            melhorMedia = dados.media;
+            melhorEquipe = equipe;
+        }
+    });
+    
+    return {
+        mediaGeral,
+        percentualPositivo,
+        melhorEquipe: melhorEquipe.charAt(0).toUpperCase() + melhorEquipe.slice(1),
+        porEquipe
+    };
+}
+
+function getCorEquipe(equipe) {
+    const cores = {
+        'manutencao': '#3b82f6',
+        'nutricao': '#10b981', 
+        'higienizacao': '#8b5cf6',
+        'hotelaria': '#f59e0b'
+    };
+    return cores[equipe] || '#6b7280';
+}
+
+function getCorAvaliacao(nota) {
+    if (nota >= 4) return '#10b981'; // Verde
+    if (nota >= 3) return '#f59e0b'; // Amarelo
+    return '#ef4444'; // Vermelho
+}
+
+function getEstrelasVisuais(nota) {
+    return '⭐'.repeat(nota) + '☆'.repeat(5 - nota);
+}
+
+function formatarDataHora(dataISO) {
+    const data = new Date(dataISO);
+    return data.toLocaleDateString('pt-BR') + ' ' + data.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+}
+
+function fecharDashboardSatisfacao() {
+    const modal = document.getElementById('modal-dashboard-satisfacao');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Expor função globalmente
+window.abrirDashboardSatisfacao = abrirDashboardSatisfacao;
+window.fecharDashboardSatisfacao = fecharDashboardSatisfacao;
 
