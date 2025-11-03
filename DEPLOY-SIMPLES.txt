@@ -1,0 +1,45 @@
+🚀 INSTRUÇÕES DE DEPLOY SIMPLES
+===================================
+
+❗ IMPORTANTE: Siga EXATAMENTE estes passos
+
+1. NETLIFY (RECOMENDADO)
+   =====================
+   a) Acesse: https://app.netlify.com
+   b) Login com GitHub
+   c) "New site from Git"
+   d) Escolha: Samukajr/yuna-healthcare-system
+   e) Configure:
+      - Build: echo "Static site"
+      - Directory: .
+      - Branch: main
+   f) Deploy
+
+2. GITHUB PAGES (ALTERNATIVO)
+   ==========================
+   a) Vá para: github.com/Samukajr/yuna-healthcare-system
+   b) Settings → Pages
+   c) Source: Deploy from branch
+   d) Branch: main / (root)
+   e) Save
+
+3. VERCEL (SE NECESSÁRIO)
+   ======================
+   a) Acesse: vercel.com/new
+   b) Import: Samukajr/yuna-healthcare-system
+   c) Framework: Other
+   d) Build Command: (vazio)
+   e) Output: .
+   f) Deploy
+
+🎯 RESULTADO ESPERADO:
+- Homepage: https://[dominio]/
+- Acompanhantes: https://[dominio]/acompanhantes/
+- Admin: https://[dominio]/admin/
+
+⚠️ SE DER ERRO:
+- Aguarde 5 minutos
+- Verifique se branch é "main"
+- Directory deve ser "." (ponto)
+
+✅ PRONTO! Sistema funcionando!
