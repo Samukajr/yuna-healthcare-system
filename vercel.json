@@ -52,13 +52,5 @@
         }
       ]
     }
-  ],
-  "functions": {
-    "acompanhantes/**": {
-      "includeFiles": "acompanhantes/**/*"
-    },
-    "admin/**": {
-      "includeFiles": "admin/**/*"
-    }
-  }
+  ]
 }
