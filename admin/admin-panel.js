@@ -1907,8 +1907,10 @@ async function confirmarFinalizacao(solicitacaoId) {
         const updateData = {
             status: 'finalizada',
             dataFinalizacao: agora.toISOString(),
+            finalizadoEm: firebase.firestore.FieldValue.serverTimestamp(), // Para o listener detectar
             tempoFinalizacao: firebase.firestore.FieldValue.serverTimestamp(),
-            dataAtualizacao: agora.toISOString()
+            dataAtualizacao: agora.toISOString(),
+            avaliada: false // Marca que ainda não foi avaliada pelo acompanhante
         };
 
         if (usuarioAdmin.nome) {
@@ -2002,10 +2004,9 @@ async function confirmarFinalizacao(solicitacaoId) {
         const modalFinalizacao = document.getElementById('modal-finalizacao');
         if (modalFinalizacao) modalFinalizacao.remove();
         
-        // Abrir pesquisa de satisfação após um delay
-        setTimeout(() => {
-            abrirPesquisaSatisfacao(solicitacaoId, solicitacaoData);
-        }, 1000);
+        // CORREÇÃO: NÃO abrir pesquisa no admin - ela deve ir para o acompanhante!
+        // O listener no portal dos acompanhantes detectará a finalização e abrirá a pesquisa
+        console.log('✅ Solicitação finalizada - pesquisa será enviada ao acompanhante automaticamente');
         
         // Fechar modal principal e recarregar dados
         fecharSolicitacaoModal();
