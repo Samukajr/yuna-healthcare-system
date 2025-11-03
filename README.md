@@ -1,9 +1,16 @@
 # 🏥 YUNA Healthcare System
 
-[![Deploy](https://img.shields.io/badge/Deploy-Ready-success?logo=github)](https://github.com/Samukajr/yuna-healthcare-system)
+[![Deploy](https://img.shields.io/badge/Deploy-Ready-success?logo=github)](https://github.com/Samukajr/clinicasyuna)
 [![PWA](https://img.shields.io/badge/PWA-Ready-purple?logo=pwa)](#)
 
 Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA otimizado.
+
+## 🌐 **ACESSO ONLINE - DOMÍNIO PROFISSIONAL**
+
+**✅ NOVO DOMÍNIO ATIVO:**
+- **🏠 Sistema Principal:** https://samukajr.github.io/clinicasyuna/
+- **👥 Portal Acompanhantes:** https://samukajr.github.io/clinicasyuna/acompanhantes/
+- **👨‍💼 Painel Admin:** https://samukajr.github.io/clinicasyuna/admin/
 
 ## 🚀 **DEPLOY AUTOMÁTICO - SIGA ESTES PASSOS**
 
@@ -13,7 +20,7 @@ Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA 
 2. **Faça login** com sua conta GitHub
 3. **Clique em "New site from Git"**
 4. **Escolha "GitHub"** e autorize a conexão
-5. **Selecione o repositório:** `Samukajr/yuna-healthcare-system`
+5. **Selecione o repositório:** `Samukajr/clinicasyuna`
 6. **Configure:**
    - Build command: `echo "Static site"`
    - Publish directory: `.` (ponto)
@@ -24,7 +31,7 @@ Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA 
 
 1. **Acesse:** https://vercel.com/new
 2. **Conecte** com GitHub
-3. **Selecione:** `Samukajr/yuna-healthcare-system`
+3. **Selecione:** `Samukajr/clinicasyuna`
 4. **Configure:**
    - Framework Preset: `Other`
    - Build Command: Deixe vazio
@@ -33,7 +40,7 @@ Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA 
 
 ### **📚 Opção 3: GitHub Pages**
 
-1. **No GitHub,** vá para Settings do repositório
+1. **No GitHub,** vá para: github.com/Samukajr/clinicasyuna
 2. **Pages** → Source: Deploy from branch
 3. **Branch:** main, folder: / (root)
 4. **Save**
@@ -108,7 +115,7 @@ O sistema é um **Progressive Web App** que pode ser instalado:
 
 - **Desenvolvedor:** Samuel Lacerda
 - **GitHub:** [@Samukajr](https://github.com/Samukajr)
-- **Repositório:** [yuna-healthcare-system](https://github.com/Samukajr/yuna-healthcare-system)
+- **Repositório:** [clinicasyuna](https://github.com/Samukajr/clinicasyuna)
 
 ---
 

@@ -8,7 +8,7 @@
    a) Acesse: https://app.netlify.com
    b) Login com GitHub
    c) "New site from Git"
-   d) Escolha: Samukajr/yuna-healthcare-system
+   d) Escolha: Samukajr/clinicasyuna
    e) Configure:
       - Build: echo "Static site"
       - Directory: .
@@ -17,7 +17,7 @@
 
 2. GITHUB PAGES (ALTERNATIVO)
    ==========================
-   a) Vá para: github.com/Samukajr/yuna-healthcare-system
+   a) Vá para: github.com/Samukajr/clinicasyuna
    b) Settings → Pages
    c) Source: Deploy from branch
    d) Branch: main / (root)
@@ -26,16 +26,16 @@
 3. VERCEL (SE NECESSÁRIO)
    ======================
    a) Acesse: vercel.com/new
-   b) Import: Samukajr/yuna-healthcare-system
+   b) Import: Samukajr/clinicasyuna
    c) Framework: Other
    d) Build Command: (vazio)
    e) Output: .
    f) Deploy
 
 🎯 RESULTADO ESPERADO:
-- Homepage: https://[dominio]/
-- Acompanhantes: https://[dominio]/acompanhantes/
-- Admin: https://[dominio]/admin/
+- Homepage: https://samukajr.github.io/clinicasyuna/
+- Acompanhantes: https://samukajr.github.io/clinicasyuna/acompanhantes/
+- Admin: https://samukajr.github.io/clinicasyuna/admin/
 
 ⚠️ SE DER ERRO:
 - Aguarde 5 minutos
