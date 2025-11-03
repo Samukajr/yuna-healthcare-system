@@ -1,0 +1,39 @@
+🔍 CHECKLIST: ATIVAR GITHUB PAGES
+===================================
+
+📋 ANTES DE COMEÇAR:
+□ Estou no repositório correto: https://github.com/yuna/yuna
+□ Sou owner/admin da organização yuna
+□ O repositório está público (não privado)
+□ Há arquivos na branch main
+
+📋 PASSO A PASSO:
+□ 1. Acessei https://github.com/yuna/yuna
+□ 2. Cliquei na aba "Settings" (no topo)
+□ 3. Cliquei em "Pages" (menu lateral esquerdo)
+□ 4. Source: mudei para "Deploy from a branch"
+□ 5. Branch: selecionei "main"
+□ 6. Folder: selecionei "/ (root)"
+□ 7. Cliquei em "Save"
+
+📋 RESULTADO ESPERADO:
+□ Apareceu: "Your site is published at https://yuna.github.io/yuna/"
+□ Aguardei 2-5 minutos
+□ Testei a URL: https://yuna.github.io/yuna/
+
+❌ SE NÃO FUNCIONOU:
+□ Verifiquei se sou owner da organização
+□ Confirmei que o repo é público
+□ Tentei aguardar mais 5 minutos
+□ Revisei se a branch está correta
+
+✅ SUCESSO:
+□ Site funcionando em: https://yuna.github.io/yuna/
+□ Acompanhantes: https://yuna.github.io/yuna/acompanhantes/
+□ Admin: https://yuna.github.io/yuna/admin/
+
+🆘 SE AINDA NÃO FUNCIONAR:
+- Verifique se você é owner da organização yuna
+- Confirme que transferiu o repositório corretamente
+- Aguarde até 10 minutos para propagação
+- Tente acessar via navegador anônimo
