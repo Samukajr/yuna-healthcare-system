@@ -7,10 +7,10 @@ Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA 
 
 ## 🌐 **ACESSO ONLINE - DOMÍNIO PROFISSIONAL**
 
-**✅ DOMÍNIO YUNA ATIVO:**
-- **🏠 Sistema Principal:** https://samukajr.github.io/yuna/
-- **👥 Portal Acompanhantes:** https://samukajr.github.io/yuna/acompanhantes/
-- **👨‍💼 Painel Admin:** https://samukajr.github.io/yuna/admin/
+**✨ URL CORPORATIVA PROFISSIONAL:**
+- **🏠 Sistema Principal:** https://yuna.github.io/yuna/
+- **👥 Portal Acompanhantes:** https://yuna.github.io/yuna/acompanhantes/
+- **👨‍💼 Painel Admin:** https://yuna.github.io/yuna/admin/
 
 ## 🚀 **DEPLOY AUTOMÁTICO - SIGA ESTES PASSOS**
 
@@ -20,7 +20,7 @@ Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA 
 2. **Faça login** com sua conta GitHub
 3. **Clique em "New site from Git"**
 4. **Escolha "GitHub"** e autorize a conexão
-5. **Selecione o repositório:** `Samukajr/yuna`
+5. **Selecione o repositório:** `yuna/yuna` (após transferir para organização)
 6. **Configure:**
    - Build command: `echo "Static site"`
    - Publish directory: `.` (ponto)
@@ -31,7 +31,7 @@ Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA 
 
 1. **Acesse:** https://vercel.com/new
 2. **Conecte** com GitHub
-3. **Selecione:** `Samukajr/yuna`
+3. **Selecione:** `yuna/yuna` (após transferir para organização)
 4. **Configure:**
    - Framework Preset: `Other`
    - Build Command: Deixe vazio
@@ -40,7 +40,7 @@ Sistema completo de gerenciamento de solicitações para clínicas YUNA com PWA 
 
 ### **📚 Opção 3: GitHub Pages**
 
-1. **No GitHub,** vá para: github.com/Samukajr/yuna
+1. **No GitHub,** vá para: github.com/yuna/yuna (após transferir)
 2. **Pages** → Source: Deploy from branch
 3. **Branch:** main, folder: / (root)
 4. **Save**

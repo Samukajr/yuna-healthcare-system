@@ -1,0 +1,38 @@
+🏢 INSTRUÇÕES PARA CRIAR yuna.github.io
+=========================================
+
+📌 OBJETIVO: Mudar de samukajr.github.io/yuna/ para yuna.github.io/yuna/
+
+✅ PASSO 1: CRIAR ORGANIZAÇÃO
+1. Acesse: https://github.com/settings/organizations
+2. Clique: "New organization"
+3. Escolha: "Create a free organization"
+4. Nome: yuna (minúsculo)
+5. Email: seu email
+6. Complete setup
+
+✅ PASSO 2: TRANSFERIR REPOSITÓRIO
+1. Vá para: https://github.com/Samukajr/yuna
+2. Settings → Danger Zone
+3. "Transfer ownership"
+4. New owner: yuna
+5. Repository name: yuna
+6. Confirme digitando: Samukajr/yuna
+7. Transfer
+
+✅ PASSO 3: ATIVAR GITHUB PAGES
+1. Novo repo: https://github.com/yuna/yuna
+2. Settings → Pages
+3. Source: Deploy from branch
+4. Branch: main / (root)
+5. Save
+
+🎯 RESULTADO FINAL:
+- Homepage: https://yuna.github.io/yuna/
+- Acompanhantes: https://yuna.github.io/yuna/acompanhantes/
+- Admin: https://yuna.github.io/yuna/admin/
+
+⏱️ TEMPO TOTAL: 5-10 minutos
+🚀 BENEFÍCIO: URL 100% profissional para clínicas!
+
+❗ IMPORTANTE: O nome da organização deve ser exatamente "yuna"
