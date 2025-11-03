@@ -1691,14 +1691,24 @@
         }
         
         function mostrarNotificacaoSatisfacao(solicitacaoId, dadosSolicitacao) {
+            console.log('[DEBUG] mostrarNotificacaoSatisfacao chamada:', {solicitacaoId, dadosSolicitacao});
+            
             // Primeiro mostra um toast informativo
             showToast('✅ Solicitação Finalizada!', 
                      'Sua solicitação foi concluída. Que tal avaliá-la?', 
                      'success', 8000);
             
+            console.log('[DEBUG] Toast exibido, aguardando 3s para abrir modal...');
+            
             // Após 3 segundos, abre automaticamente o modal de avaliação
             setTimeout(() => {
-                abrirModalAvaliacao(solicitacaoId, dadosSolicitacao);
+                console.log('[DEBUG] Tentando abrir modal de avaliação...');
+                try {
+                    abrirModalAvaliacao(solicitacaoId, dadosSolicitacao);
+                    console.log('[DEBUG] Modal de avaliação chamado com sucesso');
+                } catch (error) {
+                    console.error('[ERRO] Falha ao abrir modal de avaliação:', error);
+                }
             }, 3000);
         }
 
@@ -2809,6 +2819,8 @@
 
         // Função para abrir modal de avaliação
         function abrirModalAvaliacao(solicitacaoId, dadosSolicitacao) {
+            console.log('[DEBUG] abrirModalAvaliacao iniciada:', {solicitacaoId, dadosSolicitacao});
+            
             solicitacaoParaAvaliar = solicitacaoId;
             dadosSolicitacaoAvaliar = dadosSolicitacao;
             
@@ -2821,6 +2833,8 @@
             };
             
             // Configurar informações do serviço
+            console.log('[DEBUG] Dados da solicitação para configurar serviço:', dadosSolicitacao);
+            
             const serviceIcons = {
                 'manutencao': 'fas fa-tools',
                 'nutricao': 'fas fa-utensils',
@@ -2835,9 +2849,13 @@
                 'hotelaria': 'Hotelaria'
             };
             
-            document.getElementById('service-icon-eval').className = serviceIcons[dadosSolicitacao.tipoServico] || 'fas fa-tools';
-            document.getElementById('service-name-eval').textContent = serviceNames[dadosSolicitacao.tipoServico] || 'Serviço';
-            document.getElementById('service-description-eval').textContent = dadosSolicitacao.descricao || 'Sem descrição';
+            // Usar 'equipe' como fallback para 'tipoServico' (compatibilidade Firestore)
+            const tipoServico = dadosSolicitacao.tipoServico || dadosSolicitacao.equipe || 'manutencao';
+            console.log('[DEBUG] Tipo de serviço identificado:', tipoServico);
+            
+            document.getElementById('service-icon-eval').className = serviceIcons[tipoServico] || 'fas fa-tools';
+            document.getElementById('service-name-eval').textContent = serviceNames[tipoServico] || 'Serviço';
+            document.getElementById('service-description-eval').textContent = dadosSolicitacao.descricao || dadosSolicitacao.titulo || 'Sem descrição';
             
             // Calcular tempo de finalização
             const agora = new Date();
@@ -2868,7 +2886,14 @@
             validarFormularioAvaliacao();
             
             // Mostrar modal
-            document.getElementById('avaliacao-modal').style.display = 'flex';
+            console.log('[DEBUG] Tentando exibir modal avaliacao-modal...');
+            const modal = document.getElementById('avaliacao-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log('[DEBUG] Modal de avaliação exibido com sucesso!');
+            } else {
+                console.error('[ERRO] Modal avaliacao-modal não encontrado!');
+            }
         }
 
         // Função para enviar avaliação completa
