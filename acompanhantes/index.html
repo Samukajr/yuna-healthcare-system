@@ -2890,7 +2890,19 @@
             const modal = document.getElementById('avaliacao-modal');
             if (modal) {
                 modal.style.display = 'flex';
-                console.log('[DEBUG] Modal de avaliação exibido com sucesso!');
+                modal.style.position = 'fixed';
+                modal.style.top = '0';
+                modal.style.left = '0';
+                modal.style.width = '100%';
+                modal.style.height = '100%';
+                modal.style.zIndex = '10000';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
+                console.log('[DEBUG] Modal de avaliação exibido com sucesso! Estilos aplicados:', {
+                    display: modal.style.display,
+                    position: modal.style.position,
+                    zIndex: modal.style.zIndex
+                });
             } else {
                 console.error('[ERRO] Modal avaliacao-modal não encontrado!');
             }
